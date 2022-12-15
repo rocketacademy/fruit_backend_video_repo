@@ -1,35 +1,34 @@
 class FruitController {
-  constructor() {
-    this.fruitArray = ["Apple", "Banana"];
+  constructor(model) {
+    this.model = model;
   }
 
-  list = (req, res) => {
-    res.send({ fruit: this.fruitArray });
+  list = async (req, res) => {
+    let data = await this.model.findAll();
+    res.json({ fruit: data, message: "success" });
   };
 
-  add = (req, res) => {
-    let fruitToAdd = req.body.fruit;
-    this.fruitArray.push(fruitToAdd);
-    res.send({ fruit: this.fruitArray, message: "success" });
+  add = async (req, res) => {
+    let fruitToAdd = req.body;
+    let fruitAdded = await this.model.create(fruitToAdd);
+    let data = await this.model.findAll();
+    res.json({ fruit: data, message: "success" });
   };
 
-  edit = (req, res) => {
-    let fruitToAdd = req.body.fruit;
-    let fruitToReplace = req.params.name;
-    let index = this.fruitArray.indexOf(fruitToReplace);
-    this.fruitArray.splice(index, 1, fruitToAdd);
-    res.send({ fruit: this.fruitArray, message: "success" });
+  edit = async (req, res) => {
+    let fruitToAdd = req.body;
+    let fruitToReplace = req.params.id;
+    let fruitToEdit = await this.model.findByPk(fruitToReplace);
+    await fruitToEdit.update(fruitToAdd);
+    let data = await this.model.findAll();
+    res.json({ fruit: data, message: "success" });
   };
 
-  delete = (req, res) => {
-    let fruitToReplace = req.params.name;
-    let index = this.fruitArray.indexOf(fruitToReplace);
-    if (index == -1) {
-      res.send({ message: "No fruit with that name", fruit: this.fruitArray });
-    } else {
-      this.fruitArray.splice(index, 1);
-      res.send({ fruit: this.fruitArray, message: "success" });
-    }
+  delete = async (req, res) => {
+    let fruitToDelete = req.params.id;
+    await this.model.destroy({ where: fruitToDelete });
+    let data = await this.model.findAll();
+    res.json({ fruit: data, message: "success" });
   };
 }
 module.exports = FruitController;
