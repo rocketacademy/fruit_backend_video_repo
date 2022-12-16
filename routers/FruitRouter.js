@@ -1,16 +1,17 @@
 class FruitRouter {
-  constructor(fruitController, express) {
+  constructor(fruitController, express, checkJwt) {
     this.controller = fruitController;
     this.express = express;
+    this.checkJwt = checkJwt;
   }
 
   route = () => {
     let router = this.express.Router();
 
     router.get("/", this.controller.list);
-    router.post("/", this.controller.add);
-    router.put("/:id", this.controller.edit);
-    router.delete("/:id", this.controller.delete);
+    router.post("/", this.checkJwt, this.controller.add);
+    router.put("/:id", this.checkJwt, this.controller.edit);
+    router.delete("/:id", this.checkJwt, this.controller.delete);
 
     return router;
   };

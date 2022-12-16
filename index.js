@@ -3,13 +3,21 @@ const app = express();
 const cors = require("cors");
 
 const db = require("./db/models/index");
+
+const { auth, requiredScopes } = require("express-oauth2-jwt-bearer");
+
+const checkJwt = auth({
+  audience: "https://fruit/api",
+  issuerBaseURL: `https://dev-0qzz65qu6ebsz52w.au.auth0.com/`,
+});
+
 const { fruit } = db;
 
 const FruitController = require("./controllers/FruitController");
 const fruitController = new FruitController(fruit);
 
 const FruitRouter = require("./routers/FruitRouter");
-const fruitRouter = new FruitRouter(fruitController, express);
+const fruitRouter = new FruitRouter(fruitController, express, checkJwt);
 
 // Setting up middleware
 app.use(express.json());
