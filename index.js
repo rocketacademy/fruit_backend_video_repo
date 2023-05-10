@@ -4,7 +4,7 @@ const cors = require("cors");
 
 const db = require("./db/models/index");
 
-const { auth, requiredScopes } = require("express-oauth2-jwt-bearer");
+const { auth } = require("express-oauth2-jwt-bearer");
 
 const checkJwt = auth({
   audience: "https://fruit/api",
@@ -33,3 +33,5 @@ app.use("/", (req, res) => {
 app.listen(8080, () => {
   console.log("Application listening to port 8080");
 });
+
+module.exports = app;
